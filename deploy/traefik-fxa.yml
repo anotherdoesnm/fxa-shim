@@ -1,0 +1,38 @@
+# Traefik file-provider routes for fxa-shim (accounts) and syncstorage (sync).
+# Adjust domains and the backend URL for your tunnel/reverse proxy.
+http:
+  serversTransports:
+    yh-fxa:
+      insecureSkipVerify: true
+  routers:
+    fxa-accounts:
+      rule: "Host(`accounts.example.com`)"
+      entryPoints: [websecure]
+      service: fxa-accounts
+      tls:
+        certResolver: desec
+    fxa-accounts-http:
+      rule: "Host(`accounts.example.com`)"
+      entryPoints: [web]
+      middlewares: [to-https]
+      service: fxa-accounts
+    fxa-sync:
+      rule: "Host(`sync.example.com`)"
+      entryPoints: [websecure]
+      service: fxa-sync
+      tls:
+        certResolver: desec
+    fxa-sync-http:
+      rule: "Host(`sync.example.com`)"
+      entryPoints: [web]
+      middlewares: [to-https]
+      service: fxa-sync
+  services:
+    fxa-accounts:
+      loadBalancer:
+        serversTransport: yh-fxa
+        servers: [{ url: "https://frps:10010" }]
+    fxa-sync:
+      loadBalancer:
+        serversTransport: yh-fxa
+        servers: [{ url: "https://frps:10010" }]

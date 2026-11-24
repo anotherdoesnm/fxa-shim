@@ -1,0 +1,21 @@
+[Unit]
+Description=Firefox Sync FxA/OIDC shim
+After=network.target
+
+[Service]
+Type=simple
+User=fxa-shim
+Group=fxa-shim
+WorkingDirectory=/opt/fxa-shim/app
+EnvironmentFile=/etc/fxa-shim/env
+ExecStart=/opt/fxa-shim/node/bin/node src/server.js
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=full
+ProtectHome=yes
+ReadWritePaths=/var/lib/fxa-shim
+
+[Install]
+WantedBy=multi-user.target
